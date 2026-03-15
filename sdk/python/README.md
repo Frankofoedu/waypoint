@@ -1,6 +1,6 @@
 # Tracewire Python SDK
 
-Python SDK for [Tracewire](../../README.md) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â AI agent observability and control.
+Python SDK for [Tracewire](../../README.md) — AI agent observability and control.
 
 ## Installation
 
@@ -50,9 +50,9 @@ chain.invoke({"input": "hello"}, config={"callbacks": [handler]})
 
 | Adapter | Import |
 |---------|--------|
-| LangChain | `Tracewire.adapters.langchain.TracewireCallbackHandler` |
-| AutoGen | `Tracewire.adapters.autogen.TracewireAutoGenMiddleware` |
-| CrewAI | `Tracewire.adapters.crewai.TracewireCrewCallback` |
+| LangChain | `tracewire.adapters.langchain.TracewireCallbackHandler` |
+| AutoGen | `tracewire.adapters.autogen.TracewireAutoGenMiddleware` |
+| CrewAI | `tracewire.adapters.crewai.TracewireCrewCallback` |
 
 ## Development
 

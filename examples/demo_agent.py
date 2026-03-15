@@ -1,5 +1,5 @@
 """
-Tracewire SDK Example Ã¢â‚¬â€ Simulated AI Agent
+Tracewire SDK Example — Simulated AI Agent
 
 Shows how a developer would instrument their agent with Tracewire.
 
@@ -85,7 +85,7 @@ async def run_agent():
             payload={"tool": "web_search", "query": "quantum computing breakthroughs 2026", "result_count": len(results)},
             latency_ms=int((time.monotonic() - start) * 1000),
         )
-        print(f"[ToolCall]       web_search Ã¢â€ â€™ {len(results)} results")
+        print(f"[ToolCall]       web_search → {len(results)} results")
 
         # Step 4: LLM summarizes
         start = time.monotonic()
@@ -98,11 +98,11 @@ async def run_agent():
         )
         print(f"[ModelResponse]  {summary}")
 
-        # Step 5: Agent sends email (side-effect Ã¢â€ â€™ flagged for replay warnings!)
+        # Step 5: Agent sends email (side-effect → flagged for replay warnings!)
         start = time.monotonic()
         send_email("team@example.com", "Research Summary", summary)
         t.register_side_effect("email", {"to": "team@example.com", "subject": "Research Summary"})
-        print(f"[ToolCall]       send_email Ã¢Å¡Â Ã¯Â¸Â  side-effect registered")
+        print(f"[ToolCall]       send_email ⚠️  side-effect registered")
 
         # Step 6: Agent saves to memory
         t.log_event(

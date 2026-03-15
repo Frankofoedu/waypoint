@@ -11,7 +11,7 @@ npm install Tracewire-sdk
 ## Quick Start
 
 ```typescript
-import { TracewireClient, trace } from "Tracewire-sdk";
+import { TracewireClient, trace } from "tracewire-sdk";
 
 const client = new TracewireClient({
   baseUrl: "http://localhost:5185",

@@ -28,13 +28,13 @@ docker compose up
 ## Project Structure
 
 ```
-Tracewire/
-ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ backend/          .NET 9 API + EF Core + PostgreSQL
-ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ sdk/python/       Python SDK with framework adapters
-ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ sdk/typescript/   TypeScript SDK with framework adapters
-ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ sdk/dotnet/       .NET SDK with Semantic Kernel adapter
-ÃƒÂ¢Ã¢â‚¬ÂÃ…â€œÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ frontend/         React + Vite SPA with DAG visualization
-ÃƒÂ¢Ã¢â‚¬ÂÃ¢â‚¬ÂÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ docker-compose.yml
+tracewire/
+├── backend/          .NET 9 API + EF Core + PostgreSQL
+├── sdk/python/       Python SDK with framework adapters
+├── sdk/typescript/   TypeScript SDK with framework adapters
+├── sdk/dotnet/       .NET SDK with Semantic Kernel adapter
+├── frontend/         React + Vite SPA with DAG visualization
+└── docker-compose.yml
 ```
 
 ## Development
@@ -74,7 +74,7 @@ dotnet test
 
 ## SDK Usage
 
-### Python ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Instrument an Agent
+### Python — Instrument an Agent
 
 ```python
 from tracewire import TracewireClient, trace
@@ -86,7 +86,7 @@ async with trace(client, agent_name="my-agent") as t:
     await t.add_event(event_type="ToolCall", payload='{"tool": "search"}')
 ```
 
-### Python ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â LangChain Auto-Instrumentation
+### Python — LangChain Auto-Instrumentation
 
 ```python
 from tracewire.adapters.langchain import TracewireCallbackHandler
@@ -95,10 +95,10 @@ handler = TracewireCallbackHandler(client=client)
 chain.invoke({"input": "hello"}, config={"callbacks": [handler]})
 ```
 
-### TypeScript ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Instrument an Agent
+### TypeScript — Instrument an Agent
 
 ```typescript
-import { TracewireClient, trace } from "Tracewire-sdk";
+import { TracewireClient, trace } from "tracewire-sdk";
 
 const client = new TracewireClient({
   baseUrl: "http://localhost:5185",
@@ -111,7 +111,7 @@ await trace(client, "my-agent", async (t) => {
 });
 ```
 
-### .NET ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Instrument an Agent
+### .NET — Instrument an Agent
 
 ```csharp
 using Tracewire.Sdk;
