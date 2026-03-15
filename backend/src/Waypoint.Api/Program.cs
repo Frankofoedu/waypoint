@@ -4,6 +4,7 @@ using Waypoint.Api.Endpoints;
 using Waypoint.Api.Middleware;
 using Waypoint.Application.DTOs;
 using Waypoint.Application.Services;
+using Waypoint.Domain.Entities;
 using Waypoint.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,28 @@ using (var scope = app.Services.CreateScope())
         await db.Database.MigrateAsync();
     else
         await db.Database.EnsureCreatedAsync();
+
+    if (app.Environment.IsDevelopment() && !await db.ApiKeys.AnyAsync())
+    {
+        var org = new Organization { Name = "Demo Org" };
+        db.Organizations.Add(org);
+
+        var workspace = new Workspace { Name = "Default", OrganizationId = org.Id };
+        db.Workspaces.Add(workspace);
+
+        var rawKey = "wp_dev_testkey_123";
+        var apiKey = new ApiKey
+        {
+            KeyHash = ApiKeyAuthMiddleware.HashKey(rawKey),
+            KeyPrefix = "wp_dev",
+            WorkspaceId = workspace.Id,
+            Scopes = ["read:traces", "write:events", "replay", "admin"]
+        };
+        db.ApiKeys.Add(apiKey);
+        await db.SaveChangesAsync();
+
+        app.Logger.LogInformation("Seeded dev API key: {Key}", rawKey);
+    }
 }
 
 app.Run();

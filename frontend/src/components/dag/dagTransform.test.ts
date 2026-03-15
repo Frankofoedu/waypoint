@@ -19,7 +19,7 @@ function makeEvent(overrides: Partial<TraceEvent> = {}): TraceEvent {
 describe("dagTransform", () => {
   it("creates nodes from events", () => {
     const events = [makeEvent({ depth: 0 }), makeEvent({ depth: 1 })];
-    const { nodes, edges } = transformEventsToGraph(events);
+    const { nodes } = transformEventsToGraph(events);
     expect(nodes).toHaveLength(2);
   });
 

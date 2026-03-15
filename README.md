@@ -23,6 +23,7 @@ docker compose up
 | Frontend | React + Vite + React Flow | 5173 |
 | Python SDK | httpx + Pydantic | - |
 | TypeScript SDK | fetch + TypeScript | - |
+| .NET SDK | HttpClient + System.Text.Json | - |
 
 ## Project Structure
 
@@ -31,6 +32,7 @@ waypoint/
 ├── backend/          .NET 9 API + EF Core + PostgreSQL
 ├── sdk/python/       Python SDK with framework adapters
 ├── sdk/typescript/   TypeScript SDK with framework adapters
+├── sdk/dotnet/       .NET SDK with Semantic Kernel adapter
 ├── frontend/         React + Vite SPA with DAG visualization
 └── docker-compose.yml
 ```
@@ -62,6 +64,12 @@ pytest
 cd sdk/typescript
 npm install
 npm test
+```
+
+### .NET SDK
+```bash
+cd sdk/dotnet
+dotnet test
 ```
 
 ## SDK Usage
@@ -101,4 +109,16 @@ await trace(client, "my-agent", async (t) => {
   await t.addEvent({ eventType: "Prompt", payload: '{"prompt": "hello"}' });
   await t.addEvent({ eventType: "ToolCall", payload: '{"tool": "search"}' });
 });
+```
+
+### .NET — Instrument an Agent
+
+```csharp
+using Waypoint.Sdk;
+
+await using var t = await WaypointTrace.StartAsync("my-agent", apiKey: "your-key");
+
+t.LogEvent(EventType.Prompt, new { role = "user", content = "hello" });
+t.LogEvent(EventType.ModelResponse, new { content = response }, latencyMs: 450);
+t.RegisterSideEffect("email", new { to = "team@acme.com" });
 ```

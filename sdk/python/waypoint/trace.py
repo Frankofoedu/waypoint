@@ -89,6 +89,7 @@ async def trace(
     agent_name: str,
     base_url: str = "http://localhost:5185",
     api_key: str = "",
+    metadata: dict | None = None,
     snapshot: bool = False,
 ) -> AsyncGenerator[TraceContext, None]:
     client = WaypointClient(base_url=base_url, api_key=api_key)
@@ -96,7 +97,7 @@ async def trace(
     await buffer.start()
 
     try:
-        trace_resp = await client.create_trace(agent_name)
+        trace_resp = await client.create_trace(agent_name, metadata=metadata)
         ctx = TraceContext(client, buffer, trace_resp.id, snapshot=snapshot)
         yield ctx
     except Exception as exc:
