@@ -1,0 +1,25 @@
+{
+  "name": "waypoint-sdk",
+  "version": "0.1.0",
+  "description": "Waypoint SDK for AI agent observability and control",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.5",
+    "vitest": "^2.0"
+  },
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  }
+}

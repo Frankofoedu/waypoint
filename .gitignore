@@ -1,0 +1,41 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
+# PRD source (docs/PRD.md has the clean version)
+*.litcoffee
+*.vs/
+*.DotSettings
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+.venv/
+*.whl
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Environment
+.env
+*.env.local
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build artifacts
+publish/
