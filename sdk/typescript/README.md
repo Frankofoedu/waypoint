@@ -1,11 +1,11 @@
 # Tracewire TypeScript SDK
 
-TypeScript SDK for [Tracewire](../../README.md) â€” AI agent observability and control.
+TypeScript SDK for [Tracewire](../../README.md) — AI agent observability and control.
 
 ## Installation
 
 ```bash
-npm install Tracewire-sdk
+npm install tracewire-sdk
 ```
 
 ## Quick Start
@@ -39,14 +39,32 @@ await trace(client, "my-agent", async (t) => {
 });
 ```
 
+## Vercel AI SDK Adapter
+
+Auto-capture all LLM calls when using the Vercel AI SDK (OpenAI, Anthropic, Google, etc.):
+
+```typescript
+import { openai } from "@ai-sdk/openai";
+import { generateText } from "ai";
+import { trace } from "tracewire-sdk";
+import { wrapLanguageModel } from "tracewire-sdk/adapters/ai-sdk";
+
+await trace("my-agent", async (t) => {
+  const model = wrapLanguageModel(openai("gpt-4o"), t);
+  const { text } = await generateText({ model, prompt: "Hello!" });
+}, { apiKey: "your-key" });
+```
+
 ## LangChain Adapter
 
 ```typescript
-import { TracewireLangChainAdapter } from "Tracewire-sdk/adapters/langchain";
+import { createLangChainCallback } from "tracewire-sdk/adapters/langchain";
+import { trace } from "tracewire-sdk";
 
-const adapter = new TracewireLangChainAdapter(client);
-const callbacks = adapter.createCallbacks();
-await chain.invoke({ input: "hello" }, { callbacks });
+await trace("my-agent", async (t) => {
+  const callbacks = [createLangChainCallback(t)];
+  await chain.invoke({ input: "hello" }, { callbacks });
+}, { apiKey: "your-key" });
 ```
 
 ## Development

@@ -1,8 +1,8 @@
-# Tracewire â€” Product Requirements Document (v2.3)
+# Tracewire — Product Requirements Document (v2.3)
 
-> See the original literate source at the repo root: `# Copilot-Friendly PRD â€” Tracewire v1.litcoffee`
+> See the original literate source at the repo root: `# Copilot-Friendly PRD — Tracewire v1.litcoffee`
 
-This document summarizes the product requirements for Tracewire â€” an AI agent observability and control platform.
+This document summarizes the product requirements for Tracewire — an AI agent observability and control platform.
 
 ## Vision
 
@@ -65,7 +65,7 @@ Tracewire provides developers with a complete toolkit to **observe**, **replay**
 
 ## Multi-Tenancy
 
-- Organizations â†’ Workspaces â†’ API Keys
+- Organizations → Workspaces → API Keys
 - API key auth with SHA256 hashing, scoped permissions
 - Workspace-level replay policy configuration
 

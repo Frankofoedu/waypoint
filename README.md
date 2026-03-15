@@ -115,10 +115,14 @@ await trace(client, "my-agent", async (t) => {
 
 ```csharp
 using Tracewire.Sdk;
+using Tracewire.Sdk.Adapters;
 
 await using var t = await TracewireTrace.StartAsync("my-agent", apiKey: "your-key");
+var llm = new ChatClientAdapter(t, "gpt-4o");
 
-t.LogEvent(EventType.Prompt, new { role = "user", content = "hello" });
-t.LogEvent(EventType.ModelResponse, new { content = response }, latencyMs: 450);
-t.RegisterSideEffect("email", new { to = "team@acme.com" });
+var response = await llm.CallAsync("hello", async prompt =>
+{
+    var result = await openAiClient.CompleteChatAsync([new UserChatMessage(prompt)]);
+    return result.Value.Content[0].Text;
+});
 ```

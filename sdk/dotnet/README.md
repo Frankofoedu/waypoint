@@ -1,6 +1,6 @@
 # Tracewire .NET SDK
 
-.NET SDK for [Tracewire](../../README.md) â€” AI agent observability and control.
+.NET SDK for [Tracewire](../../README.md) — AI agent observability and control.
 
 ## Installation
 
@@ -10,7 +10,7 @@ Add a project reference (NuGet package coming soon):
 dotnet add reference path/to/sdk/dotnet/src/Tracewire.Sdk
 ```
 
-## Quick Start â€” Manual Instrumentation
+## Quick Start — Manual Instrumentation
 
 For any LLM client (OpenAI, Anthropic, Azure OpenAI, local models):
 
@@ -21,7 +21,7 @@ await using var t = await TracewireTrace.StartAsync(
     agentName: "my-agent",
     apiKey: "wp_dev_testkey_123");
 
-// Your existing code â€” call any LLM
+// Your existing code — call any LLM
 var response = await openAiClient.GetChatCompletionAsync(prompt);
 
 // Log what happened
@@ -32,7 +32,24 @@ t.LogEvent(EventType.ModelResponse, new { content = response }, latencyMs: 450, 
 t.RegisterSideEffect("email", new { to = "team@acme.com" });
 ```
 
-## Zero-Touch â€” Semantic Kernel
+## Zero-Touch — Any LLM Client (OpenAI, Azure, Ollama)
+
+```csharp
+using Tracewire.Sdk;
+using Tracewire.Sdk.Adapters;
+
+await using var t = await TracewireTrace.StartAsync("my-agent", apiKey: "wp_dev_testkey_123");
+var llm = new ChatClientAdapter(t, "gpt-4o");
+
+// Wrap your LLM call — prompt + response + latency auto-captured
+var response = await llm.CallAsync("What is quantum computing?", async prompt =>
+{
+    var result = await openAiClient.CompleteChatAsync([new UserChatMessage(prompt)]);
+    return result.Value.Content[0].Text;
+});
+```
+
+## Zero-Touch — Semantic Kernel
 
 ```csharp
 using Tracewire.Sdk;
@@ -41,7 +58,7 @@ using Tracewire.Sdk.Adapters;
 await using var t = await TracewireTrace.StartAsync("my-sk-agent", apiKey: "wp_dev_testkey_123");
 var adapter = new SemanticKernelAdapter(t);
 
-// Hook into Semantic Kernel â€” your kernel code stays unchanged
+// Hook into Semantic Kernel — your kernel code stays unchanged
 adapter.OnPromptRendered("What is quantum computing?", "gpt-4");
 // ... kernel invokes functions automatically ...
 adapter.OnFunctionInvoking("SearchPlugin", "Search", new { query = "quantum" });
