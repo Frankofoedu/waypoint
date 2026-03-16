@@ -2,7 +2,7 @@ using System.Threading.Channels;
 
 namespace Tracewire.Application.Services;
 
-public record HitlNotification(Guid EventId, Guid TraceId, string Status, string? Decision);
+public record HitlNotification(Guid EventId, Guid TraceId, string Status, string? Decision, string? BranchName = null, string? Payload = null);
 
 public class HitlNotificationService
 {

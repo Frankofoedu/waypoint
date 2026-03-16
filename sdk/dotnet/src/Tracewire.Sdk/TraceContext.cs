@@ -8,6 +8,8 @@ public sealed class TraceContext : IAsyncDisposable
     private readonly EventBuffer _buffer;
     private readonly bool _snapshot;
     private int _depth;
+    private CancellationTokenSource? _replayCts;
+    private Task? _replayTask;
 
     public Guid TraceId { get; }
 
@@ -124,8 +126,69 @@ public sealed class TraceContext : IAsyncDisposable
         throw new OperationCanceledException();
     }
 
+    public void OnReplay(Func<string, string?, string, Task> callback)
+    {
+        _replayCts = new CancellationTokenSource();
+        _replayTask = ListenForReplaysAsync(callback, _replayCts.Token);
+    }
+
+    private async Task ListenForReplaysAsync(Func<string, string?, string, Task> callback, CancellationToken ct)
+    {
+        var url = $"{_client.BaseUrl}/v1/traces/{TraceId}/stream?apiKey={Uri.EscapeDataString(_client.ApiKey)}";
+        using var http = new HttpClient();
+        try
+        {
+            using var resp = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+            resp.EnsureSuccessStatusCode();
+
+            using var stream = await resp.Content.ReadAsStreamAsync(ct);
+            using var reader = new StreamReader(stream);
+            var buffer = "";
+
+            while (!ct.IsCancellationRequested)
+            {
+                var chunk = new char[4096];
+                var read = await reader.ReadAsync(chunk.AsMemory(), ct);
+                if (read == 0) break;
+                buffer += new string(chunk, 0, read);
+
+                while (buffer.Contains("\n\n"))
+                {
+                    var idx = buffer.IndexOf("\n\n", StringComparison.Ordinal);
+                    var message = buffer[..idx];
+                    buffer = buffer[(idx + 2)..];
+
+                    foreach (var line in message.Split('\n'))
+                    {
+                        if (!line.StartsWith("data: ")) continue;
+                        var json = line[6..];
+                        var doc = JsonDocument.Parse(json);
+                        var root = doc.RootElement;
+
+                        if (root.TryGetProperty("status", out var status) &&
+                            status.GetString() == "Replay")
+                        {
+                            var branchName = root.TryGetProperty("branchName", out var bn) ? bn.GetString() ?? "" : "";
+                            var payload = root.TryGetProperty("payload", out var pl) ? pl.GetString() : null;
+                            var eventId = root.TryGetProperty("eventId", out var eid) ? eid.GetString() ?? "" : "";
+                            await callback(branchName, payload, eventId);
+                        }
+                    }
+                }
+            }
+        }
+        catch (OperationCanceledException) { }
+    }
+
     public async ValueTask DisposeAsync()
     {
+        if (_replayCts is not null)
+        {
+            await _replayCts.CancelAsync();
+            if (_replayTask is not null)
+                try { await _replayTask; } catch (OperationCanceledException) { }
+            _replayCts.Dispose();
+        }
         await _buffer.StopAsync();
     }
 }

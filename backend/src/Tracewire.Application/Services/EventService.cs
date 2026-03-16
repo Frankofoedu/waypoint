@@ -61,6 +61,9 @@ public class EventService(TracewireDbContext db, HitlNotificationService notific
         db.Events.Add(newEvent);
         await db.SaveChangesAsync();
 
+        notifications.Notify(new HitlNotification(
+            newEvent.Id, sourceEvent.TraceId, "Replay", null, branchName, newEvent.Payload));
+
         return new ReplayResponse(newEvent.Id, branchName, warnings);
     }
 
