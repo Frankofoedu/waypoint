@@ -134,9 +134,9 @@ namespace Tracewire.Infrastructure.Migrations
 
                     b.ToTable("Events", t =>
                         {
-                            t.HasCheckConstraint("CK_Event_PayloadSize", "octet_length(payload::text) <= 102400");
+                            t.HasCheckConstraint("CK_Event_PayloadSize", "octet_length(\"Payload\"::text) <= 102400");
 
-                            t.HasCheckConstraint("CK_Event_StateSnapshotSize", "octet_length(state_snapshot::text) <= 524288");
+                            t.HasCheckConstraint("CK_Event_StateSnapshotSize", "octet_length(\"StateSnapshot\"::text) <= 524288");
                         });
                 });
 

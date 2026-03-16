@@ -90,10 +90,10 @@ public class TracewireDbContext(DbContextOptions<TracewireDbContext> options) : 
                 e.Property(ev => ev.HitlDecision).HasColumnType("jsonb");
                 e.ToTable(t => t.HasCheckConstraint(
                     "CK_Event_PayloadSize",
-                    "octet_length(payload::text) <= 102400"));
+                    "octet_length(\"Payload\"::text) <= 102400"));
                 e.ToTable(t => t.HasCheckConstraint(
                     "CK_Event_StateSnapshotSize",
-                    "octet_length(state_snapshot::text) <= 524288"));
+                    "octet_length(\"StateSnapshot\"::text) <= 524288"));
             }
         });
     }

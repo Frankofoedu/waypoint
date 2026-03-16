@@ -127,8 +127,8 @@ namespace Tracewire.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
-                    table.CheckConstraint("CK_Event_PayloadSize", "octet_length(payload::text) <= 102400");
-                    table.CheckConstraint("CK_Event_StateSnapshotSize", "octet_length(state_snapshot::text) <= 524288");
+                    table.CheckConstraint("CK_Event_PayloadSize", "octet_length(\"Payload\"::text) <= 102400");
+                    table.CheckConstraint("CK_Event_StateSnapshotSize", "octet_length(\"StateSnapshot\"::text) <= 524288");
                     table.ForeignKey(
                         name: "FK_Events_Events_ParentId",
                         column: x => x.ParentId,
