@@ -2,6 +2,8 @@ import type { CreateEventRequest, EventType } from "./models.js";
 import { TracewireClient } from "./client.js";
 import { EventBuffer } from "./buffer.js";
 
+export type ReplayCallback = (branchName: string, payload: string | undefined, eventId: string) => Promise<void>;
+
 export class TraceContext {
   private client: TracewireClient;
   private buffer: EventBuffer;
@@ -9,6 +11,7 @@ export class TraceContext {
   private snapshot: boolean;
   private lastEventId: string | undefined;
   private depth = 0;
+  private replayAbort: AbortController | null = null;
 
   constructor(client: TracewireClient, buffer: EventBuffer, traceId: string, snapshot = false) {
     this.client = client;
@@ -107,6 +110,50 @@ export class TraceContext {
     }
     throw new Error("SSE stream ended without resume");
   }
+
+  onReplay(callback: ReplayCallback): void {
+    this.replayAbort = new AbortController();
+    this.listenForReplays(callback, this.replayAbort.signal);
+  }
+
+  private async listenForReplays(callback: ReplayCallback, signal: AbortSignal): Promise<void> {
+    const url = `${this.client.baseUrl}/v1/traces/${this.traceId}/stream?apiKey=${encodeURIComponent(this.client.apiKey)}`;
+    try {
+      const resp = await fetch(url, { signal });
+      if (!resp.ok || !resp.body) return;
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        while (buffer.includes("\n\n")) {
+          const idx = buffer.indexOf("\n\n");
+          const message = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+
+          for (const line of message.split("\n")) {
+            if (!line.startsWith("data: ")) continue;
+            const data = JSON.parse(line.slice(6));
+            if (data.status === "Replay") {
+              await callback(data.branchName ?? "", data.payload, data.eventId ?? "");
+            }
+          }
+        }
+      }
+    } catch {
+      // listener stopped
+    }
+  }
+
+  stopReplayListener(): void {
+    this.replayAbort?.abort();
+    this.replayAbort = null;
+  }
 }
 
 export async function trace<T>(
@@ -121,7 +168,11 @@ export async function trace<T>(
   try {
     const traceResp = await client.createTrace(agentName);
     const ctx = new TraceContext(client, buffer, traceResp.id, options?.snapshot);
-    return await fn(ctx);
+    try {
+      return await fn(ctx);
+    } finally {
+      ctx.stopReplayListener();
+    }
   } finally {
     await buffer.stop();
   }

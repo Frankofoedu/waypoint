@@ -4,7 +4,7 @@ import asyncio
 import json
 import logging
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Callable, Awaitable
 from uuid import UUID
 
 from tracewire.buffer import EventBuffer
@@ -12,6 +12,8 @@ from tracewire.client import TracewireClient
 from tracewire.models import CreateEventRequest, EventType
 
 logger = logging.getLogger("Tracewire")
+
+ReplayCallback = Callable[[str, str | None, str], Awaitable[None]]
 
 
 class TraceContext:
@@ -22,6 +24,8 @@ class TraceContext:
         self._snapshot = snapshot
         self._last_event_id: UUID | None = None
         self._depth = 0
+        self._replay_callback: ReplayCallback | None = None
+        self._sse_task: asyncio.Task | None = None
 
     def log_event(
         self,
@@ -95,6 +99,41 @@ class TraceContext:
                                 return "approve"
         return "approve"
 
+    def on_replay(self, callback: ReplayCallback) -> None:
+        self._replay_callback = callback
+        self._sse_task = asyncio.ensure_future(self._listen_for_replays())
+
+    async def _listen_for_replays(self) -> None:
+        url = f"{self._client._base_url}/v1/traces/{self.trace_id}/stream"
+        params = {"apiKey": self._client._api_key}
+        try:
+            async with self._client._http.stream("GET", url, params=params) as resp:
+                buffer = ""
+                async for chunk in resp.aiter_text():
+                    buffer += chunk
+                    while "\n\n" in buffer:
+                        message, buffer = buffer.split("\n\n", 1)
+                        for line in message.split("\n"):
+                            if not line.startswith("data: "):
+                                continue
+                            data = json.loads(line[6:])
+                            if data.get("status") == "Replay" and self._replay_callback:
+                                await self._replay_callback(
+                                    data.get("branchName", ""),
+                                    data.get("payload"),
+                                    data.get("eventId", ""),
+                                )
+        except Exception:
+            logger.debug("Replay SSE listener stopped")
+
+    async def stop_replay_listener(self) -> None:
+        if self._sse_task and not self._sse_task.done():
+            self._sse_task.cancel()
+            try:
+                await self._sse_task
+            except asyncio.CancelledError:
+                pass
+
 
 @asynccontextmanager
 async def trace(
@@ -107,6 +146,7 @@ async def trace(
     client = TracewireClient(base_url=base_url, api_key=api_key)
     buffer = EventBuffer(client)
     await buffer.start()
+    ctx: TraceContext | None = None
 
     try:
         trace_resp = await client.create_trace(agent_name, metadata=metadata)
@@ -116,5 +156,7 @@ async def trace(
         logger.exception("Trace failed: %s", exc)
         raise
     finally:
+        if ctx:
+            await ctx.stop_replay_listener()
         await buffer.stop()
         await client.close()
