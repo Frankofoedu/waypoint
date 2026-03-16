@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import Any
 
 from tracewire.models import EventType
 from tracewire.trace import TraceContext
 
 
-class TracewireAdapter(ABC):
+class TracewireAdapter:
     def __init__(self, ctx: TraceContext):
         self._ctx = ctx
 
