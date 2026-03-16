@@ -21,9 +21,13 @@ export function transformEventsToGraph(events: TraceEvent[]): { nodes: DagNode[]
   const nodes: DagNode[] = [];
   const edges: Edge[] = [];
   const branchOffsets = new Map<string, number>();
+  const branchLastEvent = new Map<string, string>();
   let branchIndex = 0;
 
-  for (const event of events) {
+  const sorted = [...events].sort((a, b) => a.stepOrder - b.stepOrder);
+
+  for (let i = 0; i < sorted.length; i++) {
+    const event = sorted[i];
     const branch = event.branchName;
     if (!branchOffsets.has(branch)) {
       branchOffsets.set(branch, branchIndex * 300);
@@ -37,7 +41,7 @@ export function transformEventsToGraph(events: TraceEvent[]): { nodes: DagNode[]
     nodes.push({
       id: event.id,
       type: "eventNode",
-      position: { x: xOffset, y: event.depth * 120 },
+      position: { x: xOffset, y: i * 140 },
       data: {
         event,
         label: `${event.eventType}${hasSideEffects ? " ⚠️" : ""}${isPaused ? " ⏸" : ""}`,
@@ -57,10 +61,24 @@ export function transformEventsToGraph(events: TraceEvent[]): { nodes: DagNode[]
         id: `${event.parentId}-${event.id}`,
         source: event.parentId,
         target: event.id,
+        type: "smoothstep",
         animated: event.hitlStatus === "Paused",
-        style: { stroke: EVENT_TYPE_COLORS[event.eventType] ?? "#6b7280" },
+        style: { stroke: EVENT_TYPE_COLORS[event.eventType] ?? "#6b7280", strokeWidth: 2 },
       });
+    } else {
+      const prev = branchLastEvent.get(branch);
+      if (prev) {
+        edges.push({
+          id: `seq-${prev}-${event.id}`,
+          source: prev,
+          target: event.id,
+          type: "smoothstep",
+          style: { stroke: EVENT_TYPE_COLORS[event.eventType] ?? "#6b7280", strokeWidth: 2 },
+        });
+      }
     }
+
+    branchLastEvent.set(branch, event.id);
   }
 
   return { nodes, edges };

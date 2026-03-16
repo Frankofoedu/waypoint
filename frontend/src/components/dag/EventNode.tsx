@@ -1,4 +1,4 @@
-import type { NodeProps } from "@xyflow/react";
+import { Handle, Position, type NodeProps } from "@xyflow/react";
 import type { TraceEvent } from "../../types";
 
 const TYPE_ICONS: Record<string, string> = {
@@ -24,6 +24,7 @@ export default function EventNode({ data }: NodeProps) {
 
   return (
     <div className="p-3 text-xs min-w-[180px]">
+      <Handle type="target" position={Position.Top} className="!bg-gray-600 !w-2 !h-2" />
       <div className="flex items-center gap-1 font-semibold mb-1">
         <span>{TYPE_ICONS[event.eventType] ?? "📌"}</span>
         <span>{event.eventType}</span>
@@ -36,6 +37,7 @@ export default function EventNode({ data }: NodeProps) {
       {event.latencyMs != null && (
         <div className="text-gray-500 mt-1">{event.latencyMs}ms</div>
       )}
+      <Handle type="source" position={Position.Bottom} className="!bg-gray-600 !w-2 !h-2" />
     </div>
   );
 }
