@@ -1,0 +1,41 @@
+name: Publish .NET SDK
+
+on:
+  push:
+    tags:
+      - "sdk-dotnet-v*"
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - run: dotnet restore
+        working-directory: sdk/dotnet
+      - run: dotnet build --no-restore
+        working-directory: sdk/dotnet
+      - run: dotnet test --no-build --verbosity normal
+        working-directory: sdk/dotnet
+
+  publish:
+    name: Publish to NuGet
+    needs: test
+    runs-on: ubuntu-latest
+    environment: nuget
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF_NAME#sdk-dotnet-v}
+          echo "SDK_VERSION=$VERSION" >> $GITHUB_ENV
+      - run: dotnet pack -c Release -p:Version=$SDK_VERSION
+        working-directory: sdk/dotnet/src/Tracewire.Sdk
+      - run: dotnet nuget push bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        working-directory: sdk/dotnet/src/Tracewire.Sdk

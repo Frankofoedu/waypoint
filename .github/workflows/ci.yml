@@ -11,8 +11,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      sdk-python: ${{ steps.filter.outputs.sdk-python }}
+      sdk-typescript: ${{ steps.filter.outputs.sdk-typescript }}
+      sdk-dotnet: ${{ steps.filter.outputs.sdk-dotnet }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+            sdk-python:
+              - 'sdk/python/**'
+            sdk-typescript:
+              - 'sdk/typescript/**'
+            sdk-dotnet:
+              - 'sdk/dotnet/**'
+
   backend:
     name: Backend (.NET)
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +56,8 @@ jobs:
 
   frontend:
     name: Frontend (React)
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,6 +75,8 @@ jobs:
 
   sdk-python:
     name: Python SDK
+    needs: changes
+    if: needs.changes.outputs.sdk-python == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -61,6 +93,8 @@ jobs:
 
   sdk-typescript:
     name: TypeScript SDK
+    needs: changes
+    if: needs.changes.outputs.sdk-typescript == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,6 +112,8 @@ jobs:
 
   sdk-dotnet:
     name: .NET SDK
+    needs: changes
+    if: needs.changes.outputs.sdk-dotnet == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
