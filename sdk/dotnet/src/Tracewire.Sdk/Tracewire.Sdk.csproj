@@ -4,7 +4,21 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <PackageId>Tracewire.Sdk</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Tracewire</Authors>
+    <Description>Tracewire SDK for AI agent observability — trace, replay, and human-in-the-loop control</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://tracewire.dev</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tracewire/tracewire</RepositoryUrl>
+    <PackageTags>ai;agents;observability;tracing;llm</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Tracewire.Sdk.Tests" />

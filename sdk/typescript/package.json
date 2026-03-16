@@ -1,5 +1,5 @@
 {
-  "name": "Tracewire-sdk",
+  "name": "tracewire-sdk",
   "version": "0.1.0",
   "description": "Tracewire SDK for AI agent observability and control",
   "main": "dist/index.js",
