@@ -3,11 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tracewire — AI Agent Observability</title>
-  <meta name="description" content="See every LLM call, replay from any point, and let humans approve high-stakes actions. Open-source observability for AI agents.">
-  <meta property="og:title" content="Tracewire — AI Agent Observability">
-  <meta property="og:description" content="See every LLM call, replay from any point, and let humans approve high-stakes actions.">
+  <title>Tracewire – Debug and Trace AI Agents | Open-Source LLM Observability</title>
+  <meta name="description" content="Open-source AI agent debugging and LLM tracing. See every prompt, model response, and tool call. Replay agent runs, debug workflows, and add human-in-the-loop approval.">
+  <meta property="og:title" content="Tracewire – Debug and Trace AI Agents | Open-Source LLM Observability">
+  <meta property="og:description" content="Open-source AI agent debugging and LLM tracing. See every prompt, model response, and tool call. Replay agent runs and add human-in-the-loop approval.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tracewire.dev">
+  <meta property="og:image" content="https://tracewire.dev/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tracewire – Debug and Trace AI Agents">
+  <meta name="twitter:description" content="Open-source AI agent debugging and LLM tracing. Replay agent runs and add human-in-the-loop approval.">
+  <meta name="keywords" content="AI agent debugging, LLM tracing, prompt debugging, LangChain tracing, OpenAI tracing, agent workflow debugging, AI observability, human-in-the-loop AI">
+  <link rel="canonical" href="https://tracewire.dev">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tracewire",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "description": "Open-source debugging and tracing for AI agents and LLM workflows. Capture every prompt, replay from any point, and add human-in-the-loop approval.",
+    "url": "https://tracewire.dev",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "license": "https://www.apache.org/licenses/LICENSE-2.0"
+  }
+  </script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
   <style>
     :root {
@@ -229,6 +253,76 @@
     .cta h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
     .cta p { color: var(--muted); margin-bottom: 24px; }
 
+    /* How it works */
+    .how-it-works { padding: 60px 0; border-top: 1px solid var(--border); }
+    .how-it-works h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .how-it-works > .container > p {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(59,130,246,0.15);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .step h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: 15px; }
+
+    /* Framework sections */
+    .frameworks-detail { padding: 60px 0; border-top: 1px solid var(--border); }
+    .frameworks-detail h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .frameworks-detail > .container > p.section-sub {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .fw-item { margin-bottom: 32px; }
+    .fw-item:last-child { margin-bottom: 0; }
+    .fw-item h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .fw-item p { color: var(--muted); font-size: 15px; max-width: 720px; }
+
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -251,6 +345,8 @@
       <div class="logo"><span>◆</span> Tracewire</div>
       <div class="links">
         <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#frameworks">Frameworks</a>
         <a href="#sdks">SDKs</a>
         <a href="https://github.com/frank/tracewire">GitHub</a>
       </div>
@@ -259,8 +355,8 @@
 
   <section class="hero">
     <div class="container">
-      <h1>Navigate your<br>AI agent's <em>path</em></h1>
-      <p>See every LLM call, replay from any point, and let humans approve high-stakes actions. Open-source observability for AI agents.</p>
+      <h1>Debug and Trace <em>AI Agents</em></h1>
+      <p>Open-source LLM observability — see every prompt, replay from any point, and let humans approve high-stakes actions.</p>
       <div class="hero-actions">
         <a href="https://github.com/frank/tracewire" class="btn btn-primary">View on GitHub</a>
         <a href="#sdks" class="btn btn-secondary">Get Started</a>
@@ -308,6 +404,61 @@
           <h3>Multi-Tenant</h3>
           <p>Organizations, workspaces, scoped API keys, and workspace-level replay policies. Built for teams from day one.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <h2>Debug AI Agents and LLM Workflows</h2>
+      <p>Tracewire helps developers trace prompts, model responses, tool calls, and errors across AI agent frameworks — from prototype to production.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Instrument</h3>
+          <p>Add a Tracewire adapter to your LLM client or agent framework. Supports LangChain, Vercel AI SDK, Semantic Kernel, and more — no code changes required for prompt debugging and OpenAI tracing.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Observe</h3>
+          <p>Every LLM call, tool invocation, and agent decision is captured as a structured DAG. Inspect payloads, latency, and cost at each step for complete AI agent debugging and LLM tracing.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Replay &amp; Control</h3>
+          <p>Click any event and replay from that point with modified inputs. Add human-in-the-loop approval gates for high-stakes actions. Debug agent workflow issues by forking and comparing branches.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="frameworks-detail" id="frameworks">
+    <div class="container">
+      <h2>Trace LangChain, CrewAI, AutoGen &amp; More</h2>
+      <p class="section-sub">Tracewire provides framework-specific adapters that capture every step of your agent's execution — no code changes needed.</p>
+      <div class="fw-item">
+        <h3>LangChain Tracing</h3>
+        <p>Capture every chain step, tool call, and model response from LangChain agents with <code>TracewireCallbackHandler</code>. Debug prompt chains, inspect intermediate outputs, and replay failed LangChain runs.</p>
+      </div>
+      <div class="fw-item">
+        <h3>Vercel AI SDK Tracing</h3>
+        <p>Wrap your Vercel AI SDK language model with <code>wrapLanguageModel()</code> to automatically trace all <code>generateText</code> and <code>streamText</code> calls. Full OpenAI tracing with token counts and latency.</p>
+      </div>
+      <div class="fw-item">
+        <h3>AutoGen Agent Tracing</h3>
+        <p>Add <code>TracewireAutoGenMiddleware</code> to capture multi-agent conversations, tool calls, and decision points in AutoGen workflows. Debug complex agent interactions step by step.</p>
+      </div>
+      <div class="fw-item">
+        <h3>CrewAI Tracing</h3>
+        <p>Instrument CrewAI crews with <code>TracewireCrewCallback</code> to trace task delegation, agent reasoning, and tool execution across your entire crew workflow.</p>
+      </div>
+      <div class="fw-item">
+        <h3>Semantic Kernel Tracing</h3>
+        <p>Use <code>SemanticKernelAdapter</code> to capture plugin invocations, planner steps, and LLM calls in .NET Semantic Kernel applications. Full support for AI agent debugging in the .NET ecosystem.</p>
+      </div>
+      <div class="fw-item">
+        <h3>LangChain.js Tracing</h3>
+        <p>Trace LangChain.js agents in TypeScript with <code>createLangChainCallback()</code>. Captures chain execution, retriever calls, and model responses for end-to-end LLM tracing.</p>
       </div>
     </div>
   </section>
